@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Class</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        form { margin: 30px; padding: 20px; border: 1px solid #ddd; max-width: 500px; }
+        input, textarea { width: 100%; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Edit Class</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p class="{{ category }}">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('update_class', class_id=class_data.id) }}">
+        <label>Class Name:</label><br>
+        <input type="text" name="name" value="{{ class_data.name }}" required><br><br>
+        
+        <label>Description:</label><br>
+        <textarea name="description" rows="5">{{ class_data.description or '' }}</textarea><br><br>
+        
+        <button type="submit">Update Class</button>
+        <a href="{{ url_for('home') }}"><button type="button">Cancel</button></a>
+    </form>
+</body>
+</html>
