@@ -3,9 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Members</title>
+    <title>Members - Python Classes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .success { color: green; }
+        .error { color: red; }
+        table { width: 95%; border-collapse: collapse; margin: 20px auto; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .actions button { margin: 3px; padding: 6px 12px; }
+    </style>
 </head>
 <body>
-    <h1>Members page</h1>
+    <h1>Members Management</h1>
+    <p>Welcome, <strong>{{ current_user.username if current_user.is_authenticated else 'Guest' }}</strong></p>
+
+    <nav>
+        <a href="{{ url_for('home') }}">Home</a> |
+        <a href="{{ url_for('members') }}">Members</a> |
+        <a href="{{ url_for('auth.logout') }}">Logout</a>
+    </nav>
+
+    <h2>Add New Member</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p class="{{ category }}">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('create_member') }}">
+        <select name="class_id" required>
+            <option value="">Select Class</option>
+            {% for cls in classes %}
+                <option value="{{ cls.id }}">{{ cls.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="text" name="name" placeholder="Full Name" required>
+        <input type="email" name="email" placeholder="Email Address" required>
+        <button type="submit">Add Member</button>
+    </form>
+
+    <h2>All Members ({{ members|length }})</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <!-- <th>Phone</th> -->
+                <th>Joined At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for member in members %}
+            <tr>
+                <td>{{ member.id }}</td>
+                <td>{{ member.name }}</td>
+                <td>{{ member.email }}</td>
+                <!-- <td>{{ member.phone or '—' }}</td> -->
+                <td>{{ member.joined_at.strftime('%Y-%m-%d') if member.joined_at else '—' }}</td>
+                <td class="actions">
+                    <a href="{{ url_for('edit_member', member_id=member.id) }}"><button>Edit</button></a>
+                    <form method="POST" action="{{ url_for('delete_member', member_id=member.id) }}" style="display:inline;" onsubmit="return confirm('Delete this member?');">
+                        <button type="submit" style="background-color: #d9534f; color: white;">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>
