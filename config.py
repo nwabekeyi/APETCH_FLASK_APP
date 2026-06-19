@@ -5,6 +5,7 @@ load_dotenv()
 
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'super-secret-key-change-in-production')
+    PYTHON_ENV = os.getenv('PYTHON_ENV', 'dev')
     
     # --- Database Settings ---
     DB_USER = os.getenv('DB_USER')
@@ -27,3 +28,4 @@ class Config:
     MAIL_USERNAME = os.getenv('EMAIL_USER')
     MAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = os.getenv('EMAIL_USER')
+    MAIL_SUPPRESS_SEND = os.getenv('PYTHON_ENV', 'dev') != 'dev'

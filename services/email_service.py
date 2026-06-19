@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, current_app
 from flask_mail import Mail, Message
 
 # Create the mail extension instance globally (unattached)
@@ -18,6 +18,11 @@ def send_email(subject, body=None, to_email=None, html=None, template_path=None,
     It automatically reads configurations from the active application context.
     """
     try:
+        env = current_app.config.get('PYTHON_ENV', 'dev')
+        if env != 'dev':
+            print("⚠️  Email sending suppressed in non-dev environment.")
+            return True
+
         msg = Message(
             subject=subject,
             recipients=[to_email],
