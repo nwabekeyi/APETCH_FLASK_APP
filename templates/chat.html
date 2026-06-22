@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mini Chat</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+</head>
+<body>
+    <h2>Flask WebSocket Chat</h2>
+    <input id="username" placeholder="Your name">
+    <button onclick="joinRoom()"> join room</button>
+
+    <input id="message" placeholder="Type message">
+    <button onclick="sendMessage()">Send</button>
+    <div id="chat"></div>
+
+    <script>
+        const socket = io();  // Connects to Flask-SocketIO
+       
+        let username;
+
+         function joinRoom() {
+         username = document.getElementById('username').value;
+
+         if(username){
+            socket.emit('join', {username: username});
+         }
+        }
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+        });
+
+        socket.on('message', (data) => {
+            const chat = document.getElementById('chat');
+            chat.innerHTML += `<p><strong>${data.username}:</strong> ${data.message}</p>`;
+            chat.scrollTop = chat.scrollHeight;
+        });
+
+        socket.on('status', (msg) => {
+            const chat = document.getElementById('chat');
+            chat.innerHTML += `<p><em>${msg}</em></p>`;
+        });
+
+        function sendMessage() {
+            const msgInput = document.getElementById('message');
+            const message = msgInput.value.trim();
+            if (message) {
+                socket.emit('message', {username: username, message: message});
+                msgInput.value = '';
+            }
+        }
+    </script>
+</body>
+</html>
