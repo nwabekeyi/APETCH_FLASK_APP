@@ -20,7 +20,7 @@ def send_email(subject, body=None, to_email=None, html=None, template_path=None,
     try:
         env = current_app.config.get('PYTHON_ENV', 'dev')
         if env != 'dev':
-            print("⚠️  Email sending suppressed in non-dev environment.")
+            print("Email sending suppressed in non-dev environment.")
             return True
 
         msg = Message(
@@ -38,11 +38,11 @@ def send_email(subject, body=None, to_email=None, html=None, template_path=None,
             msg.html = render_template(template_path, **context)
 
         mail.send(msg)
-        print("✅ Email sent successfully!")
+        print("Email sent successfully!")
         return True
-        
+
     except Exception as e:
-        print("❌ Email error:", e)
+        print("Email error:", e)
         return False
 
 
